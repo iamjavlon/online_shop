@@ -8,6 +8,8 @@ from telegram.ext import (
     CallbackContext,
 )
 import logging
+from  keys import API_TOKEN
+from connector import *
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
@@ -20,9 +22,23 @@ CONTACT = range(13)
 
 def start(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
-    update.message.bot.sendMessage(chat_id, text='Hi! My name is Test Bot.', reply_markup=ReplyKeyboardRemove())
-    request_name(update, context)
-    return NAME
+
+    result = cursor.execute(
+        "SELECT telegram_id, first_name, last_name, username from users WHERE telegram_id = '{}'".format(chat_id)
+    ).fetchall()
+    print(result)
+
+    if len(result) == 0:
+        cursor.execute("INSERT INTO users(telegram_id, first_name, last_name, username) VALUES('{}', '{}', '{}', '{}')"
+        .format(chat_id, update.effective_user.first_name, update.effective_user.last_name, update.effective_user.username))
+        conn.commit()
+        context.bot.send_message(chat_id, text='Hi! My name is Test Bot.', reply_markup=ReplyKeyboardRemove())
+        request_name(update, context)
+        return NAME
+    else:
+        print("user exists")
+        main_menu(update, context)
+        return MAIN_MENU
 
 
 def request_name(update, context):
@@ -34,7 +50,11 @@ def get_name(update, context):
     name = update.message.text
     print(name)
     request_phone(update, context)
+    cursor.execute("UPDATE users SET first_name = '{}' WHERE telegram_id = '{}'"
+    .format(name, update.message.chat_id))
+    conn.commit()
     return PHONE
+
 
 
 def request_phone(update, context):
@@ -48,6 +68,9 @@ def request_phone(update, context):
 
 def get_phone(update, context):
     phone = update.message.contact.phone_number
+    cursor.execute("UPDATE users SET phone_number = '{}' WHERE telegram_id = '{}'"
+    .format(phone, update.message.chat_id))
+    conn.commit()
     update.message.reply_text("Great, now let's see the main menu")
     print(phone)
     main_menu(update, context)
@@ -161,7 +184,7 @@ def cancel(update, context):
 
 
 def main():
-    updater = Updater(token="1744385637:AAG7dJnNlOEtH2hT6xIKKOHOITOUtAUw23o")
+    updater = Updater(token=API_TOKEN)
     dispatcher = updater.dispatcher
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],

@@ -1,4 +1,4 @@
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, KeyboardButton
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, KeyboardButton, update
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -74,7 +74,6 @@ def get_phone(update, context):
     update.message.reply_text("Great, now let's see the main menu")
     print(phone)
     main_menu(update, context)
-
     return MAIN_MENU
 
 

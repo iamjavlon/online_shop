@@ -136,6 +136,7 @@ def support(update, context):
 
 
 def contact(update, context):
+    update.message.send_message("This is Nuriddin's number!")
     context.bot.send_contact(chat_id=update.message.chat_id,
                              phone_number='+998998789907',
                              first_name='Nuriddin', reply_markup=ReplyKeyboardMarkup(

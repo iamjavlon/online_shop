@@ -136,9 +136,9 @@ def support(update, context):
 
 
 def contact(update, context):
-    update.message.reply_text("This is Nuriddin's number!")
+    update.message.reply_text("This is Javlon's number!")
     context.bot.send_contact(chat_id=update.message.chat_id,
-                             phone_number='+998998789907',
+                             phone_number='+998946904113',
                              first_name='Nuriddin', reply_markup=ReplyKeyboardMarkup(
             [
                 ['Back']

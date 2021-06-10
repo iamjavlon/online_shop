@@ -24,12 +24,12 @@ def start(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
 
     result = cursor.execute(
-        "SELECT telegram_id, first_name, last_name, username from users WHERE telegram_id = '{}'".format(chat_id)
+        "SELECT telegram_id, first_name, last_name, user_name from users WHERE telegram_id = '{}'".format(chat_id)
     ).fetchall()
     print(result)
 
     if len(result) == 0:
-        cursor.execute("INSERT INTO users(telegram_id, first_name, last_name, username) VALUES('{}', '{}', '{}', '{}')"
+        cursor.execute("INSERT INTO users(telegram_id, first_name, last_name, user_name) VALUES('{}', '{}', '{}', '{}')"
         .format(chat_id, update.effective_user.first_name, update.effective_user.last_name, update.effective_user.username))
         conn.commit()
         context.bot.send_message(chat_id, text='Hi! My name is Test Bot.', reply_markup=ReplyKeyboardRemove())
@@ -139,7 +139,7 @@ def contact(update, context):
     update.message.reply_text("This is Javlon's number!")
     context.bot.send_contact(chat_id=update.message.chat_id,
                              phone_number='+998946904113',
-                             first_name='Nuriddin', reply_markup=ReplyKeyboardMarkup(
+                             first_name='Javlon', reply_markup=ReplyKeyboardMarkup(
             [
                 ['Back']
             ], resize_keyboard=True
